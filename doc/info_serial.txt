@@ -1,0 +1,10 @@
+Baudrate: 9600 8-N-1
+
+
+Kommando startet immer mit !
+
+!1PWR01<CR> (<CR> or <LF> or <CR><LF>)
+
+Answer
+
+!1PWR00<EOF>
