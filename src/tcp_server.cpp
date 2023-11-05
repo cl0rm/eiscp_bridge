@@ -1,56 +1,72 @@
-// TCP Server
-// Listen on eISCP Port (Port 60128/TCP)
+/*******************************************************************************
+ * @file tcp_server.cpp
+ *
+ * @author Clemens Haffner
+ *
+ * @brief TCP Server for eISCP, using Arduino ESP8266 Wifi API.
+ * 
+ * Should be easy to port for ESP32
+ *
+ * @version 0.1
+ * @date 2023-11-05
+ *
+ ******************************************************************************/
 
 #include "tcp_server.h"
 #include <stdint.h>
 
 #include <ESP8266WiFi.h>
 #include <Arduino.h>
-#include <WiFiManager.h>   
 
 #include "control.h"
 
-static const uint16_t port = 60128;  //Port number
-WiFiServer Server(port);
-WiFiClient Connection;
-WiFiManager wifiManager;
+static WiFiServer Server(60128);
+static WiFiClient Connection;
 
 static uint8_t RxBuffer[256];
+static int bConnected;
 
 int tcp_init(void)
 {
-    // Connect to Wi-Fi
-    wifiManager.autoConnect("eISCP_bridge");
-
     Server.begin();
     return 0;
 }
 
 void tcp_task(void)
 {
-    uint16_t u16NewBytes;
+    int iNewBytes;
     
-    Connection = Server.available();
-
-    if(Connection)
+    if (bConnected == 0)
+    {
+        Connection = Server.available();
+        if(Connection)
+        {
+            bConnected = 1;
+        }
+    }
+    
+    if(bConnected)
     {
         if(Connection.connected())
         {
-            // Get Number of Serial Bytes Available on Serial
-            u16NewBytes = Connection.available();
-
-            if(u16NewBytes > 0)
+            iNewBytes = Connection.available();
+            if(iNewBytes > 0)
             {
-                Connection.readBytes(RxBuffer, u16NewBytes);
-                control_serial_rx(RxBuffer, u16NewBytes);
+                Connection.readBytes(RxBuffer, iNewBytes);
+                control_tcp_rx(RxBuffer, iNewBytes);
             }
+        }
+        else
+        {
+            bConnected = 0;
+            Connection.stop();
         }
     }
 }
 
 int tcp_send(uint8_t *pData, uint16_t u16Len)
 {
-    if(Connection)
+    if(bConnected)
     {
         if(Connection.connected())
         {

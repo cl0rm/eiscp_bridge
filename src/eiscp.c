@@ -38,10 +38,19 @@ static uint32_t u32DataSize;
 /* Transmission Variables */
 static uint8_t TxBuffer[258]; // two more. CR-LF quirk.
 
-
 int eiscp_send_packet(char pCommand[])
 {
-    tOnkyoPacket *pPack = (tOnkyoPacket *)TxBuffer;
+    uint16_t u16Len;
+    u16Len = eiscp_build_packet(pCommand, TxBuffer, sizeof(TxBuffer));
+    return eiscp_send_data(TxBuffer, u16Len);
+}
+
+int eiscp_build_packet(char pCommand[], uint8_t *pBuffer, uint16_t u16LenBuffer)
+{
+    if(!pBuffer) return -1;
+
+    uint32_t u32Len;
+    tOnkyoPacket *pPack = (tOnkyoPacket *)pBuffer;
 
     pPack->arPacketHeader[0] = 'I';
     pPack->arPacketHeader[1] = 'S';
@@ -55,15 +64,17 @@ int eiscp_send_packet(char pCommand[])
     pPack->reserved[2] = 0;
 
     strncpy(pPack->data, pCommand, sizeof(TxBuffer) - 16);
-    pPack->u32DataSize = strlen(pPack->data);
+     u32Len = strlen(pPack->data);
 
     // Copy our data. But there is a quirk: EOF (0x1A) at the end is not enough for eISCP
     if(pCommand[pPack->u32DataSize - 1] == 0x1A)
     {
-        pPack->data[pPack->u32DataSize++] = '\r';
-        pPack->data[pPack->u32DataSize++] = '\n';
+        pPack->data[u32Len++] = '\r';
+        pPack->data[u32Len++] = '\n';
     }
-    return eiscp_send_data(TxBuffer, u32DataSize + 16);
+
+    pPack->u32DataSize = swap_uint32(u32Len);
+    return u32Len + 16;
 }
 
 void eiscp_consume_byte(uint8_t u8Byte)

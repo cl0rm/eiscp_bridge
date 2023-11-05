@@ -32,6 +32,7 @@ typedef struct __attribute__ ((packed)) tOnkyoPacket_s
 
 // Higher Layer Interface
 int eiscp_send_packet(char pCommand[]);
+int eiscp_build_packet(char pCommand[], uint8_t *pBuffer, uint16_t u16LenBuffer);
 void eiscp_on_packet(tOnkyoPacket * pPacket); // Gets called back if packet is detected from TCP stream
 
 // LL Interface.

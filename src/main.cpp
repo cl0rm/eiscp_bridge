@@ -19,16 +19,25 @@
  ******************************************************************************/
 
 #include <Arduino.h>
+#include <WiFiManager.h>
 
 #include "tcp_server.h"
 #include "udp_server.h"
 #include "serial.h"
 
+static WiFiManager wifiManager;
+
 void setup() 
 {
-  tcp_init();
-  udp_init(); // TODO: poll Product data via serial, that way no defines for UDP server needed
   serial_init();
+
+  // TODO: Check if an AVR is connected and query Model Number
+
+  // Connect to Wi-Fi
+  wifiManager.autoConnect("eISCP_bridge");
+
+  tcp_init();
+  udp_init();
 }
 
 void loop()

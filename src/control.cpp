@@ -1,9 +1,22 @@
-// This puts everything together
+/*******************************************************************************
+ * @file control.cpp
+ *
+ * @author Clemens Haffner
+ *
+ * @brief Main for eISCP bridge
+ * 
+ * This combines the different modules in this project.
+ *
+ * @version 0.1
+ * @date 2023-11-05
+ *
+ ******************************************************************************/
 
 #include "iscp.h"
 #include "eiscp.h"
 #include "tcp_server.h"
 #include "serial.h"
+#include "control.h"
 
 
 /*******************************************************************************
