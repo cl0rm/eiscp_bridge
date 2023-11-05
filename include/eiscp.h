@@ -20,7 +20,7 @@ extern "C" {
 
 #include <stdint.h>
 
-typedef struct tOnkyoPacket_s
+typedef struct __attribute__ ((packed)) tOnkyoPacket_s
 {
     uint8_t     arPacketHeader[4];
     uint32_t    u32HeaderSize;
