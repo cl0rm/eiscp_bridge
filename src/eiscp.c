@@ -96,7 +96,7 @@ void eiscp_consume_byte(uint8_t u8Byte)
         return;
     case S_SEARCH_P:
         RxBuffer[RxBufferPos++] = u8Byte;
-        state = (u8Byte == 'P') ? S_IN_PACK : S_SEARCH_I;
+        state = (u8Byte == 'P') ? S_GET_HDRSIZE : S_SEARCH_I;
         // Seems good, we likely have a packet!
         return;
     case S_GET_HDRSIZE:
