@@ -24,10 +24,10 @@ between using this and the native eISCP implementation.
 ## Required Hardware
 
 - ESP8266 WeMosD1 Mini (other 8266 Boards should also work)
-- UART Level Shifter (TTL 3.3V -> RS-232), for example MAX232 Breakout
+- UART Level Shifter (TTL 3.3V -> RS-232), for example MAX3232 Breakout
 - Serial Cable
 
-The Tx/Rx of the MAX232 chip have to be connected to the Tx/Rx Pins of the WeMos Board.
+The Tx/Rx of the MAX232 chip have to be connected to the D1/D2 Pins of the WeMos Board. (Which Correlate to GPIO4/5, confusingly.)
 
 ## Features
 
@@ -38,11 +38,11 @@ The Tx/Rx of the MAX232 chip have to be connected to the Tx/Rx Pins of the WeMos
 
 ## Planned Features
 
-- currently, auto-Discovery always shows the Receiver as TX-SR705 (Can be changed in code udp_server.c). It should be easily possible to dynamically read the Receiver Type on Boot-Up
+- currently, auto-Discovery always shows the Receiver as TX-SR705 (Can be changed in udp_server.c). It should be easily possible to dynamically read the Receiver Type on Boot-Up
 - Direct MQTT control. This would completely circumvent eISCP, and might be the best solution for new control systems.
 - Maybe a custom PCB (that would just plug into any Onkyo AVR. This would include a fan 
 controller, because AVRs tend to run hot, and cooling them prolongs the life greatly.)
 
 ## License
 - GPLv3
-- Commercial Use (e.g. MIT Licenses) only after contacting me.
+- For commercial use (including different licensing) contact me.
