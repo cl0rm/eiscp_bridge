@@ -27,18 +27,24 @@
 static WiFiUDP UdpServer;
 
 static uint8_t RxBuffer[128];
-static String sMAC;
+static uint8_t TxBuf[256];
+static int iLenDiscoveryResponse;
 
 int udp_init(void)
 {
     // Get the MAC Address
-    sMAC = WiFi.macAddress();
+    String sMAC = WiFi.macAddress();
+    char sResponse[80];
     // Remove colons
     sMAC.remove(2, 1); // xx:xx:xx:xx:xx:xx
     sMAC.remove(4, 1);
     sMAC.remove(6, 1);
     sMAC.remove(8, 1);
     sMAC.remove(10, 1);
+
+    // Form response in advance!
+    snprintf(sResponse, 80, "!1ECN%s/%05d/%s/%s\x19\r\n", MODEL_NAME, 60128, REGIONAL_ID, sMAC.c_str());
+    iLenDiscoveryResponse = eiscp_build_packet(sResponse, TxBuf, sizeof(TxBuf));
 
     UdpServer.begin(60128);
     return 0;
@@ -57,22 +63,30 @@ void udp_task(void)
 
             if (strcmp((char *)RxBuffer, "ISCP") == 0)
             {
+                Serial.print("[UDP] received bcast from ");
+                Serial.print(UdpServer.remoteIP());
+                Serial.print(" at port ");
+                Serial.println(UdpServer.remotePort());
                 if(RxBuffer[16] == '!')
                 {
                     if(strnstr((char *)&RxBuffer[18],"ECNQSTN",16))
                     {                       
-                        // Form response
-                        char sResponse[80];
-                        uint8_t TxBuf[256];
-                        int iLen2;
-
-                        snprintf(sResponse, 80, "!1ECN%s/%05d/%s/%s\x1A", MODEL_NAME, 60128, REGIONAL_ID, sMAC.c_str());
-                        iLen2 = eiscp_build_packet(sResponse, TxBuf, sizeof(TxBuf));
-                        if (iLen2 > 0)
+                        if(UdpServer.beginPacket(UdpServer.remoteIP(), UdpServer.remotePort()) == 1)
                         {
-                            UdpServer.beginPacket(UdpServer.remoteIP(), UdpServer.remotePort());
-                            UdpServer.write(TxBuf, iLen2);
-                            UdpServer.endPacket();
+                            UdpServer.write(TxBuf, iLenDiscoveryResponse);
+                            if(UdpServer.endPacket() == 1)
+                            {
+                                Serial.println("[UDP] response sent!");
+                            }
+                            else
+                            {
+                                Serial.println("[UDP] error sending response");
+                            }
+
+                        }
+                        else
+                        {
+                            Serial.println("[UDP] error beginPacket()");
                         }
                     }
                 }
