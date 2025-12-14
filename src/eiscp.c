@@ -7,8 +7,8 @@
  * 
  * Reception / Transmission of Ethernet eISCP Commands via TCP.
  *
- * @version 0.1
- * @date 2023-11-05
+ * @version 1.0
+ * @date 2025-12-12
  *
  ******************************************************************************/
 
@@ -64,10 +64,10 @@ int eiscp_build_packet(char pCommand[], uint8_t *pBuffer, uint16_t u16LenBuffer)
     pPack->reserved[2] = 0;
 
     strncpy(pPack->data, pCommand, sizeof(TxBuffer) - 16);
-     u32Len = strlen(pPack->data);
+    u32Len = strlen(pPack->data);
 
     // Copy our data. But there is a quirk: EOF (0x1A) at the end is not enough for eISCP
-    if(pCommand[pPack->u32DataSize - 1] == 0x1A)
+    if(pCommand[u32Len - 1] == 0x1A)
     {
         pPack->data[u32Len++] = '\r';
         pPack->data[u32Len++] = '\n';
