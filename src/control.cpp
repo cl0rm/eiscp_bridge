@@ -18,6 +18,8 @@
 #include "serial.h"
 #include "control.h"
 
+#include <Arduino.h>
+
 
 /*******************************************************************************
  * @brief Ethernet -> Serial
@@ -26,6 +28,8 @@
  ******************************************************************************/
 void eiscp_on_packet(tOnkyoPacket * pPacket)
 {
+    Serial.print("[TCP] received packet: ");
+    Serial.println(pPacket->data);
     iscp_send_message(pPacket->data);
 }
 
@@ -36,6 +40,8 @@ void eiscp_on_packet(tOnkyoPacket * pPacket)
  ******************************************************************************/
 void iscp_on_message(char pMessage[])
 {
+    Serial.print("[232] received frame: ");
+    Serial.println(pMessage);
     eiscp_send_packet(pMessage);
 }
 

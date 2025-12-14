@@ -38,9 +38,11 @@ void tcp_task(void)
     
     if (bConnected == 0)
     {
-        Connection = Server.available();
+        Connection = Server.accept();
         if(Connection)
         {
+            Serial.print("[TCP] accepted new connection from ");
+            Serial.println(Connection.remoteIP());
             bConnected = 1;
         }
     }

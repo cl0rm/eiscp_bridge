@@ -32,6 +32,8 @@ void setup()
   serial_init();
 
   // TODO: Check if an AVR is connected and query Model Number
+  Serial.begin(115200);
+  Serial.println("--------- APP BOOTED ---------");
 
   // Connect to Wi-Fi
   wifiManager.autoConnect("eISCP_bridge");
