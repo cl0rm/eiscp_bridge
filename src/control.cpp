@@ -28,8 +28,9 @@
  ******************************************************************************/
 void eiscp_on_packet(tOnkyoPacket * pPacket)
 {
-    Serial.print("[TCP] received packet: ");
-    Serial.println(pPacket->data);
+    //Serial.print("[TCP] received packet: ");
+    //Serial.println(pPacket->data);
+    Serial.println("[TCP] received packet");
     iscp_send_message(pPacket->data);
 }
 
